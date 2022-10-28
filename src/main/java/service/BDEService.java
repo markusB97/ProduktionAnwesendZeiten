@@ -81,7 +81,15 @@ public class BDEService {
         bpmsFilter.setFieldContent("PCBPNRBIS", person.getPersonalNr());
         bpmsFilter.setFieldContent("BEGINN_DATE", dateFrom);
         bpmsFilter.setFieldContent("ENDE_DATE", dateUntil);
-        bpmsFilter.gotoOverview();
+
+        // if there is no stempelung, an exception occurs
+        try {
+            bpmsFilter.gotoOverview();
+        } catch (JBOBException e) {
+            LogService.log("Fehler bei Personalnummer: " + person.getPersonalNr());
+            LogService.log(e);
+            LogService.sendErrorMail(e);
+        }
 
         // iterate over all found
         for (int i = 0; i < bpmsOverview.getArraySize(1) - 2; i++) {
